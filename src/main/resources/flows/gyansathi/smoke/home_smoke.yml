@@ -1,0 +1,23 @@
+# Smoke flow: verifies the GyanSathi site is reachable and rendered.
+# Uses only DOM-agnostic checks (URL, page body) so it runs green without
+# knowing the exact selectors.
+name: "GyanSathi - home page smoke"
+description: "Home page loads and renders"
+application: gyansathi
+steps:
+  - action: NAVIGATE
+    page: home
+    description: "Open the GyanSathi home page"
+
+  - action: ASSERT_URL_CONTAINS
+    value: "gyansathi"
+    description: "Landed on a gyansathi URL"
+
+  - action: ASSERT_VISIBLE
+    page: home
+    element: body
+    description: "Page body rendered"
+
+  - action: SCREENSHOT
+    value: "gyansathi_home"
+    description: "Capture the home page"

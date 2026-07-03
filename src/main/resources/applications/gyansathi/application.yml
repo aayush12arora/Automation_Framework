@@ -1,0 +1,124 @@
+# =============================================================================
+# APPLICATION CONFIGURATION: GyanSathi (www.gyansathi.com)
+# =============================================================================
+# This single file describes everything the framework needs to drive the
+# application: its environments, pages, and element locators. Onboarding another
+# application means copying this folder and editing the values below - no Java.
+#
+# NOTE ON LOCATORS
+# ----------------
+# The locators below are sensible STARTING POINTS based on common web patterns.
+# They must be verified/tuned against the live DOM (open the site, inspect the
+# element, update `type` + `value`). The smoke flow shipped with this repo only
+# relies on locators that are safe without DOM knowledge (page <body>, URL,
+# title), so it runs green out of the box; page-specific flows are examples to
+# adapt once the real selectors are confirmed.
+# =============================================================================
+
+name: gyansathi
+
+environments:
+  prod:
+    baseUrl: "https://www.gyansathi.com"
+    apiBaseUrl: "https://www.gyansathi.com/api"
+    properties:
+      brand: "GyanSathi"
+
+  # Add more environments as they exist, e.g.:
+  # stage:
+  #   baseUrl: "https://stage.gyansathi.com"
+
+pages:
+
+  # --- Home / landing page -------------------------------------------------
+  home:
+    path: "/"
+    elements:
+      body:
+        type: TAG_NAME
+        value: "body"
+        description: "Page body (present on any site)"
+      logo:
+        type: CSS
+        value: ".navbar-brand, a.logo, img[alt*='GyanSathi' i]"
+        description: "Site logo / brand"
+      loginLink:
+        type: XPATH
+        value: "//a[contains(translate(., 'LOGIN', 'login'),'login')]"
+        description: "Login link"
+      registerLink:
+        type: XPATH
+        value: "//a[contains(translate(., 'REGISTER','register'),'register') or contains(translate(., 'SIGN','sign'),'sign up')]"
+        description: "Register / Sign up link"
+      searchInput:
+        type: CSS
+        value: "input[type='search'], input[name='q'], input[placeholder*='Search' i]"
+        description: "Search box"
+      searchButton:
+        type: CSS
+        value: "button[type='submit'], button[aria-label*='search' i]"
+        description: "Search submit button"
+      navMenu:
+        type: CSS
+        value: "nav, header nav, .navbar"
+        description: "Primary navigation"
+
+  # --- Login page ----------------------------------------------------------
+  login:
+    path: "/login"
+    elements:
+      username:
+        type: CSS
+        value: "input[name='email'], input[type='email'], #email, #username"
+        description: "Username / email field"
+      password:
+        type: CSS
+        value: "input[name='password'], input[type='password'], #password"
+        description: "Password field"
+      submit:
+        type: CSS
+        value: "button[type='submit'], input[type='submit']"
+        description: "Login submit button"
+      errorMessage:
+        type: CSS
+        value: ".error, .alert-danger, [role='alert']"
+        description: "Login error message"
+
+  # --- Registration page ---------------------------------------------------
+  register:
+    path: "/register"
+    elements:
+      fullName:
+        type: CSS
+        value: "input[name='name'], #name, #fullName"
+        description: "Full name field"
+      email:
+        type: CSS
+        value: "input[name='email'], input[type='email']"
+        description: "Email field"
+      password:
+        type: CSS
+        value: "input[name='password'], input[type='password']"
+        description: "Password field"
+      submit:
+        type: CSS
+        value: "button[type='submit']"
+        description: "Register submit button"
+
+  # --- Search results page -------------------------------------------------
+  searchResults:
+    path: "/search"
+    elements:
+      resultsContainer:
+        type: CSS
+        value: ".results, .search-results, main"
+        description: "Search results container"
+      firstResult:
+        type: CSS
+        value: ".results a, .search-results a, main a"
+        description: "First search result"
+
+# Free-form data any test or flow can read via getApplicationConfig().getTestData()
+testData:
+  sampleSearchTerm: "physics"
+  expectedBrandInUrl: "gyansathi"

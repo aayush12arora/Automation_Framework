@@ -1,0 +1,27 @@
+# EXAMPLE flow: negative login. Demonstrates TYPE/CLICK/ASSERT against a form.
+# Adapt selectors in application.yml (login page) to the real DOM to enable.
+name: "GyanSathi - invalid login (example)"
+description: "Submitting bad credentials shows an error"
+application: gyansathi
+steps:
+  - action: NAVIGATE
+    page: login
+
+  - action: TYPE
+    page: login
+    element: username
+    value: "not-a-real-user@example.com"
+
+  - action: TYPE
+    page: login
+    element: password
+    value: "wrong-password"
+
+  - action: CLICK
+    page: login
+    element: submit
+
+  - action: ASSERT_VISIBLE
+    page: login
+    element: errorMessage
+    description: "An error message is displayed"

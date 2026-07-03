@@ -1,0 +1,28 @@
+# EXAMPLE flow demonstrating a data-driven user journey. Adapt the element
+# names/selectors in application.yml to the real DOM before enabling in CI.
+name: "GyanSathi - search journey (example)"
+description: "Search from the home page and open the first result"
+application: gyansathi
+steps:
+  - action: NAVIGATE
+    page: home
+
+  - action: TYPE
+    page: home
+    element: searchInput
+    value: "physics"
+    description: "Type a search term"
+
+  - action: CLICK
+    page: home
+    element: searchButton
+    description: "Submit the search"
+
+  - action: ASSERT_URL_CONTAINS
+    value: "search"
+    description: "Navigated to results"
+
+  - action: ASSERT_VISIBLE
+    page: searchResults
+    element: resultsContainer
+    description: "Results are shown"

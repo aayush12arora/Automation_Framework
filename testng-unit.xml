@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+
+<!-- Browser-free suite: validates configuration and flow definitions.
+     Run with:  mvn test -DsuiteXmlFile=testng-unit.xml -->
+<suite name="Unit Suite" verbose="1">
+    <test name="Config and Flow Parsing">
+        <classes>
+            <class name="com.automation.framework.tests.unit.ConfigAndFlowParsingTest"/>
+        </classes>
+    </test>
+</suite>

@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master, "claude/**" ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  validate:
+    name: Build & validate config/flows (browser-free)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+
+      - name: Compile
+        run: mvn -B clean test-compile
+
+      # Validates application.yml + all flow files parse and every locator/action
+      # is well-formed. Needs no browser, so it is stable in CI.
+      - name: Config & flow validation suite
+        run: mvn -B test -DsuiteXmlFile=testng-unit.xml
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-output
+          path: test-output/
+          if-no-files-found: ignore
