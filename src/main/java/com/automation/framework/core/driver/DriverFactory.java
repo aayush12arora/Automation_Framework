@@ -1,7 +1,6 @@
 package com.automation.framework.core.driver;
 
 import com.automation.framework.core.config.ConfigurationManager;
-import com.automation.framework.enums.BrowserType;
 import com.automation.framework.exceptions.FrameworkException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,9 +32,13 @@ public final class DriverFactory {
         BrowserType browser = config.getBrowser();
         MutableCapabilities options = buildOptions(browser, config);
 
-        WebDriver driver = config.isRemoteExecution()
+        WebDriver rawDriver = config.isRemoteExecution()
                 ? createRemoteDriver(options, config)
                 : createLocalDriver(browser, options, config);
+
+        // Decorate with an event listener for richer logging.
+        WebDriver driver = new org.openqa.selenium.support.events.EventFiringDecorator<>(
+                new WebDriverEventListenerImpl()).decorate(rawDriver);
 
         applyTimeouts(driver, config);
         applyWindow(driver, config);
@@ -46,66 +49,13 @@ public final class DriverFactory {
     // ------------------------------------------------------------- browser options
 
     private static MutableCapabilities buildOptions(BrowserType browser, ConfigurationManager config) {
-        boolean headless = config.isHeadless();
-        boolean incognito = config.isIncognito();
-        String windowSize = config.getWindowSize();
-        String binary = config.getBrowserBinary();
-
-        switch (browser) {
-            case CHROME -> {
-                ChromeOptions options = new ChromeOptions();
-                if (headless) {
-                    options.addArguments("--headless=new");
-                }
-                if (incognito) {
-                    options.addArguments("--incognito");
-                }
-                options.addArguments("--no-sandbox", "--disable-dev-shm-usage",
-                        "--disable-gpu", "--remote-allow-origins=*");
-                if (!"maximize".equalsIgnoreCase(windowSize)) {
-                    options.addArguments("--window-size=" + windowSize.replace('x', ','));
-                }
-                if (binary != null) {
-                    options.setBinary(binary);
-                }
-                return options;
-            }
-            case EDGE -> {
-                EdgeOptions options = new EdgeOptions();
-                if (headless) {
-                    options.addArguments("--headless=new");
-                }
-                if (incognito) {
-                    options.addArguments("--inprivate");
-                }
-                options.addArguments("--no-sandbox", "--disable-dev-shm-usage");
-                if (!"maximize".equalsIgnoreCase(windowSize)) {
-                    options.addArguments("--window-size=" + windowSize.replace('x', ','));
-                }
-                if (binary != null) {
-                    options.setBinary(binary);
-                }
-                return options;
-            }
-            case FIREFOX -> {
-                FirefoxOptions options = new FirefoxOptions();
-                if (headless) {
-                    options.addArguments("-headless");
-                }
-                if (incognito) {
-                    options.addArguments("-private");
-                }
-                if (binary != null) {
-                    options.setBinary(binary);
-                }
-                return options;
-            }
-            case SAFARI -> {
-                // Safari exposes almost no configurable options and ignores headless.
-                return new org.openqa.selenium.safari.SafariOptions();
-            }
-            default -> throw new FrameworkException("No options builder for browser: " + browser);
-        }
+        return switch (browser) {
+            case CHROME -> ChromeDriverHelper.buildOptions(config);
+            case EDGE -> EdgeDriverHelper.buildOptions(config);
+            case FIREFOX -> FirefoxDriverHelper.buildOptions(config);
+            // Safari exposes almost no configurable options and ignores headless.
+            case SAFARI -> new org.openqa.selenium.safari.SafariOptions();
+        };
     }
 
     // --------------------------------------------------------------- driver builders

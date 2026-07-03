@@ -32,6 +32,7 @@
         <commons.lang3.version>3.17.0</commons.lang3.version>
         <datafaker.version>2.4.2</datafaker.version>
         <hikaricp.version>6.2.1</hikaricp.version>
+        <axecore.version>4.10.1</axecore.version>
         <lombok.version>1.18.36</lombok.version>
         <webdrivermanager.version>5.9.2</webdrivermanager.version>
 
@@ -132,6 +133,13 @@
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
             <version>${hikaricp.version}</version>
+        </dependency>
+
+        <!-- Accessibility (WCAG) scanning -->
+        <dependency>
+            <groupId>com.deque.html.axe-core</groupId>
+            <artifactId>selenium</artifactId>
+            <version>${axecore.version}</version>
         </dependency>
 
         <!-- Boilerplate reduction -->

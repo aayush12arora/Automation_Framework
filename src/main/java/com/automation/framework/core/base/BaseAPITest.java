@@ -1,16 +1,16 @@
 package com.automation.framework.core.base;
 
-import com.automation.framework.api.RestClient;
+import com.automation.framework.api.executors.RestAPIExecutor;
 import io.restassured.RestAssured;
 import org.testng.annotations.BeforeClass;
 
 /**
  * Base class for API tests. Configures REST-Assured with the active
- * environment's API base URL and exposes a ready-to-use {@link RestClient}.
+ * environment's API base URL and exposes a ready-to-use {@link RestAPIExecutor}.
  */
 public abstract class BaseAPITest extends BaseTest {
 
-    protected RestClient restClient;
+    protected RestAPIExecutor restClient;
 
     @BeforeClass(alwaysRun = true)
     public void initApi() {
@@ -18,7 +18,7 @@ public abstract class BaseAPITest extends BaseTest {
         if (apiBaseUrl != null && !apiBaseUrl.isBlank()) {
             RestAssured.baseURI = apiBaseUrl;
         }
-        restClient = new RestClient(apiBaseUrl);
+        restClient = new RestAPIExecutor(apiBaseUrl);
         log.info("API base URL: {}", apiBaseUrl);
     }
 }

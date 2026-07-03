@@ -1,6 +1,6 @@
 package com.automation.framework.core.config;
 
-import com.automation.framework.enums.BrowserType;
+import com.automation.framework.core.driver.BrowserType;
 import com.automation.framework.exceptions.FrameworkException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;

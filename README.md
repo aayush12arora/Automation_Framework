@@ -51,22 +51,39 @@ logs in `test-output/logs/`.
 
 ## Project layout
 
+The package tree follows the reference **Comprehensive Development Guide**
+structure and file names, generalized to be application-agnostic. The base
+package is `com.automation.framework` (generic, since the framework targets any
+application); the dynamic **`engine/`** package is the config-driven layer added
+on top of the classic POM structure.
+
 ```
 src/main/java/com/automation/framework/
 ├── core/
-│   ├── config/          ConfigurationManager + config POJOs (Application/Page/Element/Environment)
-│   ├── driver/          DriverManager (thread-local) + DriverFactory (multi-browser/remote)
-│   ├── base/            BasePage, BaseTest, BaseUITest, BaseAPITest
-│   └── factory/         PageFactory (config-driven + reflection for custom pages)
-├── pages/               DynamicPage — the config-driven page object
+│   ├── driver/          DriverFactory, DriverManager, BrowserType (enum),
+│   │                    Chrome/Edge/FirefoxDriverHelper, WebDriverEventListenerImpl
+│   ├── config/          ConfigurationManager, EnvironmentConfig, BrowserConfig, TestDataConfig,
+│   │                    ApplicationConfig, PageConfig, ElementConfig, DatabaseConfig
+│   ├── base/            BasePage, BaseTest, BaseUITest, BaseAPITest, BaseSoapAPITest
+│   └── factory/         PageFactory, ApplicationFactory
+├── pages/               DynamicPage (config-driven page object)
+│   └── interfaces/      IPage (contract for custom pages)
 ├── engine/              Flow, Step, ActionType, FlowExecutor, FlowResources (keyword engine)
-├── api/                 RestClient (generic REST-Assured wrapper)
-├── reporting/           ExtentManager, ExtentTestManager, TestListener
+├── api/
+│   ├── executors/       RestAPIExecutor (generic REST-Assured wrapper)
+│   ├── models/          BaseAPIModel, request/ApiRequest, response/ApiResponse
+│   └── soap/            SoapAPIExecutor
+├── database/            DatabaseConnection, DatabaseQueryExecutor, DatabaseValidator, repository/
+├── reporting/           ExtentManager, ExtentTestManager, TestListener, ReportLogger
+├── cloudproviders/      BrowserStackHelper, SauceLabsHelper
+├── accessibility/       AxeBuilderHelper, AxeViolationsReporter
 ├── listeners/           RetryAnalyzer
-├── utilities/           WaitUtils, SeleniumUtils, ScreenshotUtils, JsonUtils, RandomDataGenerator
-├── enums/               BrowserType, LocatorType
-├── constants/           FrameworkConstants
-└── exceptions/          FrameworkException
+├── utilities/           Selenium/Wait/Screenshot/JavaScript/DateTime/String/File/Json/
+│                        Encryption utils, RandomDataGenerator
+├── enums/               LocatorType, BrowserType*, Environment, UIType, TestCategory
+├── constants/           FrameworkConstants, MessageConstants
+├── exceptions/          FrameworkException, ElementNotFound/Api/DatabaseException
+└── models/              TestContext
 
 src/main/resources/
 ├── config/
@@ -84,6 +101,9 @@ src/test/java/com/automation/framework/tests/
 ├── ui/                  GyanSathiSmokeTest (config-driven), FlowDrivenTest (data-driven by flow files)
 └── unit/                ConfigAndFlowParsingTest (browser-free validation)
 ```
+
+\* `BrowserType` lives in `core/driver/` (used by the driver layer); the other
+enums live in `enums/`.
 
 ---
 
@@ -243,4 +263,4 @@ mvn test -Dremote.execution=true -Dremote.url=https://<grid-or-hub>/wd/hub
 ## Tech stack
 
 Selenium 4 · TestNG 7 · ExtentReports 5 · REST-Assured 5 · Jackson (YAML/JSON) ·
-Log4j 2 · AssertJ · Datafaker · HikariCP · Lombok.
+Log4j 2 · AssertJ · Datafaker · HikariCP · Deque axe-core · Lombok.

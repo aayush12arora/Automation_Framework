@@ -1,4 +1,4 @@
-package com.automation.framework.enums;
+package com.automation.framework.core.driver;
 
 import com.automation.framework.exceptions.FrameworkException;
 

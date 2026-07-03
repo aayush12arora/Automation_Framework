@@ -1,4 +1,4 @@
-package com.automation.framework.api;
+package com.automation.framework.api.executors;
 
 import com.automation.framework.core.config.ConfigurationManager;
 import io.restassured.RestAssured;
@@ -16,22 +16,22 @@ import java.util.Map;
  * the active environment's {@code apiBaseUrl}, but any absolute path works too.
  * Kept deliberately generic so it fits any API without payment/biller specifics.
  */
-public class RestClient {
+public class RestAPIExecutor {
 
-    private static final Logger log = LogManager.getLogger(RestClient.class);
+    private static final Logger log = LogManager.getLogger(RestAPIExecutor.class);
 
     private final String baseUri;
     private Map<String, String> defaultHeaders = Collections.emptyMap();
 
-    public RestClient() {
+    public RestAPIExecutor() {
         this(ConfigurationManager.getInstance().getApiBaseUrl());
     }
 
-    public RestClient(String baseUri) {
+    public RestAPIExecutor(String baseUri) {
         this.baseUri = baseUri;
     }
 
-    public RestClient withDefaultHeaders(Map<String, String> headers) {
+    public RestAPIExecutor withDefaultHeaders(Map<String, String> headers) {
         this.defaultHeaders = headers == null ? Collections.emptyMap() : headers;
         return this;
     }
