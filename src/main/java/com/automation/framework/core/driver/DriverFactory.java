@@ -115,7 +115,12 @@ public final class DriverFactory {
     private static void applyWindow(WebDriver driver, ConfigurationManager config) {
         String windowSize = config.getWindowSize();
         if ("maximize".equalsIgnoreCase(windowSize)) {
-            driver.manage().window().maximize();
+            // Headless has no window manager: maximize() is a no-op that can snap
+            // the window back to the 800x600 default, undoing the desktop
+            // --window-size we set in the browser options. Skip it when headless.
+            if (!config.isHeadless()) {
+                driver.manage().window().maximize();
+            }
         } else if (windowSize.contains("x")) {
             String[] parts = windowSize.toLowerCase().split("x");
             try {

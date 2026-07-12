@@ -1,0 +1,12 @@
+{
+  "id": "CUST-001",
+  "firstName": "Test",
+  "lastName": "Student1",
+  "username": "test1@gmail.com",
+  "password": "Test1@123",
+  "email": "test1@gmail.com",
+  "phone": "9999999999",
+
+  "expectedLandingPath": "/student/",
+  "expectedHeading": "Available Courses"
+}

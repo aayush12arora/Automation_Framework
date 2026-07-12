@@ -1,0 +1,25 @@
+# =============================================================================
+# APPLICATION CONFIGURATION: JSONPlaceholder (public dummy REST API)
+# =============================================================================
+# A minimal application whose only purpose is API testing against the free,
+# no-auth REST API at https://jsonplaceholder.typicode.com. It shows how the
+# framework onboards an API-only target: no pages, just an environment with an
+# apiBaseUrl. Run the API tests against it with:
+#
+#   mvn test -Dapplication=jsonplaceholder -Dtest=JsonPlaceholderApiTest
+# =============================================================================
+
+name: jsonplaceholder
+
+environments:
+  prod:
+    # No web UI is exercised, but baseUrl is required by EnvironmentConfig.
+    baseUrl: "https://jsonplaceholder.typicode.com"
+    apiBaseUrl: "https://jsonplaceholder.typicode.com"
+
+# No pages: this application is API-only.
+pages: {}
+
+testData:
+  knownPostId: 1
+  knownUserId: 1

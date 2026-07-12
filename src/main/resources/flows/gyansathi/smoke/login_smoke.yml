@@ -1,0 +1,66 @@
+# Smoke flow: a student signs in with valid credentials.
+# Picked up automatically by FlowDrivenTest - no Java required.
+name: "GyanSathi - login with valid credentials"
+description: "Clicking Login, submitting valid credentials, lands in the student area"
+application: gyansathi
+steps:
+  - action: NAVIGATE
+    page: home
+    description: "Open the GyanSathi home page"
+
+  - action: CLICK
+    page: home
+    element: loginButton
+    description: "Click Login in the top navigation"
+
+  - action: ASSERT_URL_CONTAINS
+    value: "/auth/login"
+    description: "Landed on the login page"
+
+  # The form is client-rendered and appears after the URL changes.
+  - action: WAIT_VISIBLE
+    page: login
+    element: username
+    description: "Login form has rendered"
+
+  - action: TYPE
+    page: login
+    element: username
+    value: "test1@gmail.com"
+    description: "Enter the username"
+
+  - action: TYPE
+    page: login
+    element: password
+    value: "Test1@123"
+    description: "Enter the password"
+
+  # Sign In is disabled until the terms box is ticked, so this precedes the click.
+  - action: CLICK
+    page: login
+    element: agreeToTerms
+    description: "Accept the Privacy Policy and Terms & Conditions"
+
+  - action: CLICK
+    page: login
+    element: submit
+    description: "Submit the login form"
+
+  - action: ASSERT_URL_CONTAINS
+    value: "/student/"
+    description: "Redirected into the student area"
+
+  - action: ASSERT_VISIBLE
+    page: studentCourses
+    element: logoutButton
+    description: "Logout is visible, so the session is authenticated"
+
+  - action: ASSERT_TEXT
+    page: studentCourses
+    element: heading
+    value: "Available Courses"
+    description: "Available Courses page is shown"
+
+  - action: SCREENSHOT
+    value: "gyansathi_login_success"
+    description: "Capture the signed-in page"

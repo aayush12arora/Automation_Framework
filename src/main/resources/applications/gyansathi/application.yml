@@ -7,12 +7,10 @@
 #
 # NOTE ON LOCATORS
 # ----------------
-# The locators below are sensible STARTING POINTS based on common web patterns.
-# They must be verified/tuned against the live DOM (open the site, inspect the
-# element, update `type` + `value`). The smoke flow shipped with this repo only
-# relies on locators that are safe without DOM knowledge (page <body>, URL,
-# title), so it runs green out of the box; page-specific flows are examples to
-# adapt once the real selectors are confirmed.
+# The `home`, `login` and `studentCourses` locators were verified against the
+# live rendered DOM. The remaining pages (register, searchResults) are still
+# unverified STARTING POINTS based on common web patterns - inspect the element
+# and update `type` + `value` before relying on them.
 # =============================================================================
 
 name: gyansathi
@@ -42,10 +40,10 @@ pages:
         type: CSS
         value: ".navbar-brand, a.logo, img[alt*='GyanSathi' i]"
         description: "Site logo / brand"
-      loginLink:
+      loginButton:
         type: XPATH
-        value: "//a[contains(translate(., 'LOGIN', 'login'),'login')]"
-        description: "Login link"
+        value: "//button[normalize-space()='Login']"
+        description: "Login button in the top nav; navigates to /auth/login"
       registerLink:
         type: XPATH
         value: "//a[contains(translate(., 'REGISTER','register'),'register') or contains(translate(., 'SIGN','sign'),'sign up')]"
@@ -64,25 +62,32 @@ pages:
         description: "Primary navigation"
 
   # --- Login page ----------------------------------------------------------
+  # Locators below were verified against the live rendered DOM. The page is
+  # client-rendered, so the form appears a moment after the URL changes; every
+  # framework action waits for visibility, so no explicit sleeps are needed.
   login:
-    path: "/login"
+    path: "/auth/login"
     elements:
       username:
-        type: CSS
-        value: "input[name='email'], input[type='email'], #email, #username"
-        description: "Username / email field"
+        type: ID
+        value: "username"
+        description: "Username field (type=text, not an email input)"
       password:
-        type: CSS
-        value: "input[name='password'], input[type='password'], #password"
+        type: ID
+        value: "password"
         description: "Password field"
+      agreeToTerms:
+        type: ID
+        value: "agreedToTerms"
+        description: "Privacy Policy / T&C checkbox; Sign In stays disabled until it is ticked"
       submit:
         type: CSS
-        value: "button[type='submit'], input[type='submit']"
-        description: "Login submit button"
+        value: "button[type='submit']"
+        description: "Sign In button; rendered with the disabled attribute until the form is valid"
       errorMessage:
         type: CSS
-        value: ".error, .alert-danger, [role='alert']"
-        description: "Login error message"
+        value: "div.bg-red-50 p"
+        description: "Red error banner. Beware: an unrelated 'Profile fetch failed' banner can render on page load"
 
   # --- Registration page ---------------------------------------------------
   register:
@@ -118,7 +123,22 @@ pages:
         value: ".results a, .search-results a, main a"
         description: "First search result"
 
+  # --- Student landing page (where a successful login lands) ---------------
+  studentCourses:
+    path: "/student/courses/available_courses"
+    elements:
+      heading:
+        type: XPATH
+        value: "//h1[normalize-space()='Available Courses']"
+        description: "Page heading"
+      logoutButton:
+        type: XPATH
+        value: "//button[normalize-space()='Logout']"
+        description: "Logout button; only present once authenticated"
+
 # Free-form data any test or flow can read via getApplicationConfig().getTestData()
+# Per-test data (customers, credentials, expected values) lives instead in
+# src/test/resources/TestData/<module>/<testName>.json - see TestDataReader.
 testData:
   sampleSearchTerm: "physics"
   expectedBrandInUrl: "gyansathi"

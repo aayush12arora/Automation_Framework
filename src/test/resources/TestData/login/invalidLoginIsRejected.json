@@ -1,0 +1,10 @@
+{
+  "id": "CUST-999",
+  "firstName": "Not",
+  "lastName": "Registered",
+  "username": "not-a-real-user@example.com",
+  "password": "wrong-password",
+  "email": "not-a-real-user@example.com",
+
+  "expectedError": "Invalid credentials"
+}

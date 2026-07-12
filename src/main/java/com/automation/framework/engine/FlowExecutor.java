@@ -5,6 +5,8 @@ import com.automation.framework.core.driver.DriverManager;
 import com.automation.framework.exceptions.FrameworkException;
 import com.automation.framework.pages.DynamicPage;
 import com.automation.framework.reporting.ExtentTestManager;
+import com.automation.framework.reporting.ReportLogger;
+import com.automation.framework.utilities.ScreenshotUtils;
 import com.automation.framework.utilities.WaitUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -101,8 +103,7 @@ public class FlowExecutor {
             case WAIT_VISIBLE -> waitVisible(step);
             case WAIT_SECONDS -> waitSeconds(step);
             case SCROLL_TO -> page(step).scrollTo(page(step).locator(requireElement(step)));
-            case SCREENSHOT -> com.automation.framework.utilities.ScreenshotUtils.capture(
-                    step.getValue() == null ? "flow_step" : step.getValue());
+            case SCREENSHOT -> screenshot(step);
             case ASSERT_VISIBLE -> assertVisible(step);
             case ASSERT_TEXT -> assertTextContains(step);
             case ASSERT_TEXT_EQUALS -> assertTextEquals(step);
@@ -113,6 +114,13 @@ public class FlowExecutor {
     }
 
     // ------------------------------------------------------------------- handlers
+
+    private void screenshot(Step step) {
+        String label = step.getValue() == null ? "flow_step" : step.getValue();
+        // Save a file copy for CI artifacts and embed the image in the report.
+        ScreenshotUtils.capture(label);
+        ReportLogger.screenshot("Screenshot: " + label);
+    }
 
     private void navigate(Step step) {
         String pageName = step.getPage() != null ? step.getPage() : step.getValue();

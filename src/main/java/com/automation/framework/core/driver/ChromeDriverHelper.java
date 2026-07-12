@@ -25,7 +25,14 @@ public final class ChromeDriverHelper {
                 "--disable-gpu", "--remote-allow-origins=*");
 
         String windowSize = config.getWindowSize();
-        if (!"maximize".equalsIgnoreCase(windowSize)) {
+        boolean maximize = "maximize".equalsIgnoreCase(windowSize);
+        if (config.isHeadless()) {
+            // Headless Chrome has no window manager, so window().maximize() does
+            // nothing and the viewport stays at the 800x600 default - which trips
+            // responsive sites into their mobile layout. Force a desktop size:
+            // an explicit "WxH" is honoured; "maximize" maps to a large default.
+            options.addArguments("--window-size=" + (maximize ? "1920,1080" : windowSize.replace('x', ',')));
+        } else if (!maximize) {
             options.addArguments("--window-size=" + windowSize.replace('x', ','));
         }
         String binary = config.getBrowserBinary();

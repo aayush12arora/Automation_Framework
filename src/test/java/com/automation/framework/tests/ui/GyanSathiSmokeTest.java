@@ -2,27 +2,28 @@ package com.automation.framework.tests.ui;
 
 import com.automation.framework.constants.FrameworkConstants;
 import com.automation.framework.core.base.BaseUITest;
-import com.automation.framework.pages.DynamicPage;
+import com.automation.framework.pages.gyansathi.HomePage;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * Config-driven smoke test for GyanSathi. Notice there is no page-specific Java:
- * pages and elements come from {@code applications/gyansathi/application.yml}.
- * Point the framework at another application (via {@code -Dapplication=...}) and
- * the same style of test works unchanged.
+ * Smoke test for GyanSathi, driven through the page object model.
  */
 public class GyanSathiSmokeTest extends BaseUITest {
 
     @Test(groups = FrameworkConstants.GROUP_SMOKE,
             description = "Home page loads and is served from a gyansathi URL")
     public void homePageLoads() {
-        DynamicPage home = page("home").open();
+        logStep("Opening the GyanSathi home page");
+        HomePage home = pageObject(HomePage.class).open();
+
+        // Pin a screenshot to this exact step in the report.
+        attachScreenshot("Home page loaded");
 
         Assert.assertTrue(home.getCurrentUrl().toLowerCase().contains("gyansathi"),
                 "URL should contain 'gyansathi' but was: " + home.getCurrentUrl());
-        Assert.assertTrue(home.isVisible("body"), "Page body should be rendered");
+        Assert.assertTrue(home.isLoaded(), "Page body should be rendered");
 
-        log.info("Home page title: {}", home.getTitle());
+        logStep("Home page title: " + home.getTitle());
     }
 }

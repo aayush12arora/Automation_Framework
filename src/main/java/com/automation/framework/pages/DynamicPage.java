@@ -99,16 +99,12 @@ public class DynamicPage extends BasePage {
         return this;
     }
 
-    public String pageName() {
-        return pageConfig.getName();
+    public DynamicPage waitForText(String elementName, String text) {
+        waitForText(locator(elementName), text);
+        return this;
     }
 
-    private static String joinUrl(String base, String path) {
-        if (path == null || path.isBlank() || "/".equals(path)) {
-            return base;
-        }
-        String b = base.endsWith("/") ? base.substring(0, base.length() - 1) : base;
-        String p = path.startsWith("/") ? path : "/" + path;
-        return b + p;
+    public String pageName() {
+        return pageConfig.getName();
     }
 }

@@ -8,11 +8,14 @@
   Parallelism is by methods; thread-count is safe because the driver is
   thread-local (see DriverManager).
 -->
+<!--
+  TestListener is registered globally via ServiceLoader
+  (src/test/resources/META-INF/services/org.testng.ITestNGListener) so that it
+  also fires for single-test runs launched from the IDE or via
+  `mvn test -Dtest=Class#method`. Do NOT also list it here, or every test would
+  be logged to the report twice.
+-->
 <suite name="Automation Suite" verbose="1" parallel="methods" thread-count="3">
-
-    <listeners>
-        <listener class-name="com.automation.framework.reporting.TestListener"/>
-    </listeners>
 
     <test name="UI Smoke">
         <groups>
@@ -22,6 +25,7 @@
         </groups>
         <classes>
             <class name="com.automation.framework.tests.ui.GyanSathiSmokeTest"/>
+            <class name="com.automation.framework.tests.ui.GyanSathiLoginTest"/>
             <class name="com.automation.framework.tests.ui.FlowDrivenTest"/>
         </classes>
     </test>

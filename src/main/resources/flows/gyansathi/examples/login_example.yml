@@ -1,11 +1,20 @@
 # EXAMPLE flow: negative login. Demonstrates TYPE/CLICK/ASSERT against a form.
-# Adapt selectors in application.yml (login page) to the real DOM to enable.
+#
+# CAVEAT: `errorMessage` matches the page's red banner, and an unrelated
+# "Profile fetch failed" banner can render on load - so this assertion can pass
+# without the login actually having been rejected. Assert on the banner's text
+# before trusting this as a real negative test.
 name: "GyanSathi - invalid login (example)"
 description: "Submitting bad credentials shows an error"
 application: gyansathi
 steps:
   - action: NAVIGATE
     page: login
+
+  # The form is client-rendered and appears a moment after the page loads.
+  - action: WAIT_VISIBLE
+    page: login
+    element: username
 
   - action: TYPE
     page: login
@@ -16,6 +25,11 @@ steps:
     page: login
     element: password
     value: "wrong-password"
+
+  # Sign In stays disabled until the terms box is ticked.
+  - action: CLICK
+    page: login
+    element: agreeToTerms
 
   - action: CLICK
     page: login

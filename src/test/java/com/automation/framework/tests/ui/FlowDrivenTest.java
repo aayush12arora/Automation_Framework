@@ -24,10 +24,15 @@ public class FlowDrivenTest extends BaseUITest {
         return flows.stream().map(flow -> new Object[]{flow}).toArray(Object[][]::new);
     }
 
+    /**
+     * Named {@code executeFlow} rather than {@code runFlow}: a method with the
+     * latter name would override {@link BaseUITest#runFlow(Flow)} and recurse
+     * into itself instead of delegating to the executor.
+     */
     @Test(dataProvider = "smokeFlows",
             groups = FrameworkConstants.GROUP_SMOKE,
             description = "Execute a config-defined flow")
-    public void runFlow(Flow flow) {
+    public void executeFlow(Flow flow) {
         log.info("Running flow: {}", flow.displayName());
         runFlow(flow);
     }

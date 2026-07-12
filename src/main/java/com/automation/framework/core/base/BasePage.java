@@ -1,5 +1,7 @@
 package com.automation.framework.core.base;
 
+import com.automation.framework.core.config.ConfigurationManager;
+import com.automation.framework.reporting.StepReporter;
 import com.automation.framework.utilities.SeleniumUtils;
 import com.automation.framework.utilities.WaitUtils;
 import org.apache.logging.log4j.LogManager;
@@ -16,8 +18,12 @@ import java.util.List;
  * that waiting, scrolling and logging are consistent everywhere. Page objects
  * (including the fully config-driven {@link com.automation.framework.pages.DynamicPage})
  * extend this class and work in terms of {@link By} locators.
+ *
+ * <p>Implements {@link StepReporter}, so every page object can call
+ * {@code logStep(...)}, {@code attachScreenshot(...)} and {@code report()}
+ * directly to write to the current test's report node.
  */
-public abstract class BasePage {
+public abstract class BasePage implements StepReporter {
 
     protected final Logger log = LogManager.getLogger(getClass());
     protected final WebDriver driver;
@@ -32,14 +38,14 @@ public abstract class BasePage {
         WebElement element = WaitUtils.waitForClickable(driver, locator);
         SeleniumUtils.scrollIntoView(driver, element);
         element.click();
-        log.info("Clicked {}", locator);
+        logStep("Clicked {}", locator);
     }
 
     public void type(By locator, String text) {
         WebElement element = WaitUtils.waitForVisible(driver, locator);
         element.clear();
         element.sendKeys(text);
-        log.info("Typed '{}' into {}", text, locator);
+        logStep("Typed '{}' into {}", text, locator);
     }
 
     public void clear(By locator) {
@@ -98,11 +104,32 @@ public abstract class BasePage {
         WaitUtils.waitForClickable(driver, locator);
     }
 
+    /** Wait until the element's text contains {@code text}; it may start out showing something else. */
+    public void waitForText(By locator, String text) {
+        WaitUtils.waitForTextPresent(driver, locator, text);
+    }
+
     public void scrollTo(By locator) {
         SeleniumUtils.scrollIntoView(driver, WaitUtils.waitForPresence(driver, locator));
     }
 
     // ------------------------------------------------------------------ navigation
+
+    /** Open {@code path} relative to the active environment's base URL. */
+    protected void navigate(String path) {
+        String url = joinUrl(ConfigurationManager.getInstance().getBaseUrl(), path);
+        logStep("Opening {}", url);
+        driver.get(url);
+    }
+
+    protected static String joinUrl(String base, String path) {
+        if (path == null || path.isBlank() || "/".equals(path)) {
+            return base;
+        }
+        String b = base.endsWith("/") ? base.substring(0, base.length() - 1) : base;
+        String p = path.startsWith("/") ? path : "/" + path;
+        return b + p;
+    }
 
     public String getTitle() {
         return driver.getTitle();
